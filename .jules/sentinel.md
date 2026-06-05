@@ -1,0 +1,4 @@
+## 2026-06-05 - Application Hardening and Entry Point Fix
+**Vulnerability:** The application was missing essential security headers (X-Powered-By was enabled, no CSP, etc.) and had no request body size limits, making it susceptible to information disclosure and DoS attacks. Additionally, a broken require path in `app.js` prevented the application from starting, which could hide these issues from automated security scanners.
+**Learning:** Default Express configurations are often insecure. In this case, the entry point bug also acted as a blocker for security verification.
+**Prevention:** Always use `helmet` for baseline security headers and `express.json({ limit: '...' })` to prevent DoS. Use a standardized entry point verification (like `node -e "require('./app.js')"`) in CI/CD to ensure the app is always bootable for scans.
