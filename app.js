@@ -1,10 +1,15 @@
 const express = require('express');
-const routes = require('./routes/index');
+const helmet = require('helmet');
+const routes = require('./src/routes/index');
 require('dotenv').config();
 
 const app = express();
 
-app.use(express.json());
+// Use helmet for security headers
+app.use(helmet());
+
+// Limit JSON body size to 10kb to prevent DoS
+app.use(express.json({ limit: '10kb' }));
 
 app.use('/escola', routes);
 
