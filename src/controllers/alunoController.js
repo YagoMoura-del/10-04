@@ -15,6 +15,11 @@ exports.createAluno = async (req, res) => {
     if (!id_turma || !nome_completo || !cpf || !data_nascimento || !email) {
         return res.status(400).json({ error: "Todos os campos do aluno são obrigatórios" });
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Formato de e-mail inválido" });
+    }
     try {
         const newAluno = await alunoModel.create(id_turma, nome_completo, cpf, data_nascimento, email);
         res.status(201).json(newAluno);
@@ -30,6 +35,11 @@ exports.updateAluno = async (req, res) => {
     
     if (!id_turma || !nome_completo || !cpf || !data_nascimento || !email) {
         return res.status(400).json({ error: 'Todos os campos são necessários para atualização.' });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Formato de e-mail inválido" });
     }
 
     try {
