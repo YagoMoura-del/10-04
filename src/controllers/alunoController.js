@@ -1,5 +1,7 @@
 const alunoModel = require('../models/alunoModel');
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 exports.getAlunos = async (req, res) => {
     try {
         const alunos = await alunoModel.findAll();
@@ -15,9 +17,14 @@ exports.createAluno = async (req, res) => {
     if (!id_turma || !nome_completo || !cpf || !data_nascimento || !email) {
         return res.status(400).json({ error: "Todos os campos do aluno são obrigatórios" });
     }
+
+    if (!EMAIL_REGEX.test(email)) {
+        return res.status(400).json({ error: "O formato do e-mail é inválido" });
+    }
+
     try {
         const newAluno = await alunoModel.create(id_turma, nome_completo, cpf, data_nascimento, email);
-        res.status(201).json(newAluno);
+        res.status(201).json(newAluno[0]);
     } catch (err) {
         console.error('Erro ao criar aluno', err);
         res.status(500).json({ error: "Erro interno ao criar aluno" });
@@ -32,10 +39,14 @@ exports.updateAluno = async (req, res) => {
         return res.status(400).json({ error: 'Todos os campos são necessários para atualização.' });
     }
 
+    if (!EMAIL_REGEX.test(email)) {
+        return res.status(400).json({ error: "O formato do e-mail é inválido" });
+    }
+
     try {
         const updated = await alunoModel.update(id, id_turma, nome_completo, cpf, data_nascimento, email);
-        if (!updated) return res.status(404).json({ error: 'Aluno não encontrado.' });
-        res.json(updated);
+        if (updated.length === 0) return res.status(404).json({ error: 'Aluno não encontrado.' });
+        res.json(updated[0]);
     } catch (err) {
         res.status(500).json({ error: 'Erro interno ao atualizar aluno' });
     }
@@ -45,7 +56,7 @@ exports.deleteAluno = async (req, res) => {
     const { id } = req.params;
     try {
         const deleted = await alunoModel.delete(id);
-        if (!deleted) return res.status(404).json({ error: "Aluno não encontrado" });
+        if (deleted.length === 0) return res.status(404).json({ error: "Aluno não encontrado" });
         res.json({ message: "Aluno removido com sucesso" });
     } catch (err) {
         res.status(500).json({ error: "Erro interno ao deletar aluno" });
