@@ -17,7 +17,7 @@ exports.createCurso = async (req, res) => {
     }
     try {
         const newCurso = await cursoModel.create(nome_curso);
-        res.status(201).json(newCurso);
+        res.status(201).json(newCurso[0]);
     } catch (err) {
         console.error('Erro ao criar curso', err);
         res.status(500).json({ error: "Erro interno ao criar curso" });
@@ -32,10 +32,10 @@ exports.updateCurso = async (req, res) => {
     }
     try {
         const updatedCurso = await cursoModel.update(id, nome_curso);
-        if (!updatedCurso) {
+        if (!updatedCurso || updatedCurso.length === 0) {
             return res.status(404).json({ error: 'Curso não encontrado.' });
         }
-        res.json(updatedCurso);
+        res.json(updatedCurso[0]);
     } catch (err) {
         console.error('Erro ao atualizar curso:', err);
         res.status(500).json({ error: 'Erro interno ao atualizar curso' });
@@ -46,10 +46,10 @@ exports.deleteCurso = async (req, res) => {
     const { id } = req.params;
     try {
         const deleted = await cursoModel.delete(id);
-        if (!deleted) {
+        if (!deleted || deleted.length === 0) {
             return res.status(404).json({ error: "Curso não encontrado para exclusão" });
         }
-        res.json({ message: "Curso removido com sucesso", curso: deleted });
+        res.json({ message: "Curso removido com sucesso", curso: deleted[0] });
     } catch (err) {
         console.error("Erro ao deletar curso", err);
         res.status(500).json({ error: "Erro interno ao deletar curso" });
