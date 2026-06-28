@@ -1,5 +1,7 @@
 const alunoModel = require('../models/alunoModel');
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 exports.getAlunos = async (req, res) => {
     try {
         const alunos = await alunoModel.findAll();
@@ -15,6 +17,11 @@ exports.createAluno = async (req, res) => {
     if (!id_turma || !nome_completo || !cpf || !data_nascimento || !email) {
         return res.status(400).json({ error: "Todos os campos do aluno são obrigatórios" });
     }
+
+    if (!EMAIL_REGEX.test(email)) {
+        return res.status(400).json({ error: "E-mail inválido" });
+    }
+
     try {
         const newAluno = await alunoModel.create(id_turma, nome_completo, cpf, data_nascimento, email);
         res.status(201).json(newAluno);
@@ -30,6 +37,10 @@ exports.updateAluno = async (req, res) => {
     
     if (!id_turma || !nome_completo || !cpf || !data_nascimento || !email) {
         return res.status(400).json({ error: 'Todos os campos são necessários para atualização.' });
+    }
+
+    if (!EMAIL_REGEX.test(email)) {
+        return res.status(400).json({ error: "E-mail inválido" });
     }
 
     try {
