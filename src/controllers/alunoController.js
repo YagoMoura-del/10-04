@@ -10,11 +10,19 @@ exports.getAlunos = async (req, res) => {
     }
 };
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 exports.createAluno = async (req, res) => {
     const { id_turma, nome_completo, cpf, data_nascimento, email } = req.body;
     if (!id_turma || !nome_completo || !cpf || !data_nascimento || !email) {
         return res.status(400).json({ error: "Todos os campos do aluno são obrigatórios" });
     }
+
+    // Security enhancement: validate email format
+    if (!EMAIL_REGEX.test(email)) {
+        return res.status(400).json({ error: "Formato de e-mail inválido" });
+    }
+
     try {
         const newAluno = await alunoModel.create(id_turma, nome_completo, cpf, data_nascimento, email);
         res.status(201).json(newAluno);
@@ -30,6 +38,11 @@ exports.updateAluno = async (req, res) => {
     
     if (!id_turma || !nome_completo || !cpf || !data_nascimento || !email) {
         return res.status(400).json({ error: 'Todos os campos são necessários para atualização.' });
+    }
+
+    // Security enhancement: validate email format
+    if (!EMAIL_REGEX.test(email)) {
+        return res.status(400).json({ error: "Formato de e-mail inválido" });
     }
 
     try {
