@@ -32,7 +32,7 @@ exports.updateTurma = async (req, res) => {
     }
     try {
         const updated = await turmaModel.update(id, id_curso, ano_letivo, periodo);
-        if (!updated) return res.status(404).json({ error: 'Turma não encontrada.' });
+        if (!updated || updated.length === 0) return res.status(404).json({ error: 'Turma não encontrada.' });
         res.json(updated);
     } catch (err) {
         res.status(500).json({ error: 'Erro interno ao atualizar turma' });
@@ -43,7 +43,7 @@ exports.deleteTurma = async (req, res) => {
     const { id } = req.params;
     try {
         const deleted = await turmaModel.delete(id);
-        if (!deleted) return res.status(404).json({ error: "Turma não encontrada" });
+        if (!deleted || deleted.length === 0) return res.status(404).json({ error: "Turma não encontrada" });
         res.json({ message: "Turma removida com sucesso" });
     } catch (err) {
         res.status(500).json({ error: "Erro interno ao deletar turma" });
