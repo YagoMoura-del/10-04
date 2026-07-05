@@ -1,8 +1,11 @@
 const express = require('express');
-const routes = require('./routes/index');
+const routes = require('./src/routes/index');
 require('dotenv').config();
 
 const app = express();
+
+// SECURITY: Disable X-Powered-By header to prevent technology fingerprinting
+app.disable('x-powered-by');
 
 app.use(express.json());
 
