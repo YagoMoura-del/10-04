@@ -34,7 +34,9 @@ exports.updateAluno = async (req, res) => {
 
     try {
         const updated = await alunoModel.update(id, id_turma, nome_completo, cpf, data_nascimento, email);
-        if (!updated) return res.status(404).json({ error: 'Aluno não encontrado.' });
+        // SECURITY: node-postgres returns an empty array if no rows match.
+        // We check for both !updated and empty array to correctly handle 'Not Found'.
+        if (!updated || updated.length === 0) return res.status(404).json({ error: 'Aluno não encontrado.' });
         res.json(updated);
     } catch (err) {
         res.status(500).json({ error: 'Erro interno ao atualizar aluno' });
@@ -45,7 +47,8 @@ exports.deleteAluno = async (req, res) => {
     const { id } = req.params;
     try {
         const deleted = await alunoModel.delete(id);
-        if (!deleted) return res.status(404).json({ error: "Aluno não encontrado" });
+        // SECURITY: node-postgres returns an empty array if no rows match.
+        if (!deleted || deleted.length === 0) return res.status(404).json({ error: "Aluno não encontrado" });
         res.json({ message: "Aluno removido com sucesso" });
     } catch (err) {
         res.status(500).json({ error: "Erro interno ao deletar aluno" });
