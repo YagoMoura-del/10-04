@@ -15,6 +15,17 @@ exports.createAluno = async (req, res) => {
     if (!id_turma || !nome_completo || !cpf || !data_nascimento || !email) {
         return res.status(400).json({ error: "Todos os campos do aluno são obrigatórios" });
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Formato de email inválido" });
+    }
+
+    const cpfRegex = /^\d{11}$|^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+    if (!cpfRegex.test(String(cpf))) {
+        return res.status(400).json({ error: "Formato de CPF inválido" });
+    }
+
     try {
         const newAluno = await alunoModel.create(id_turma, nome_completo, cpf, data_nascimento, email);
         res.status(201).json(newAluno);
@@ -32,9 +43,19 @@ exports.updateAluno = async (req, res) => {
         return res.status(400).json({ error: 'Todos os campos são necessários para atualização.' });
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Formato de email inválido" });
+    }
+
+    const cpfRegex = /^\d{11}$|^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+    if (!cpfRegex.test(String(cpf))) {
+        return res.status(400).json({ error: "Formato de CPF inválido" });
+    }
+
     try {
         const updated = await alunoModel.update(id, id_turma, nome_completo, cpf, data_nascimento, email);
-        if (!updated) return res.status(404).json({ error: 'Aluno não encontrado.' });
+        if (!updated || updated.length === 0) return res.status(404).json({ error: 'Aluno não encontrado.' });
         res.json(updated);
     } catch (err) {
         res.status(500).json({ error: 'Erro interno ao atualizar aluno' });
@@ -45,7 +66,7 @@ exports.deleteAluno = async (req, res) => {
     const { id } = req.params;
     try {
         const deleted = await alunoModel.delete(id);
-        if (!deleted) return res.status(404).json({ error: "Aluno não encontrado" });
+        if (!deleted || deleted.length === 0) return res.status(404).json({ error: "Aluno não encontrado" });
         res.json({ message: "Aluno removido com sucesso" });
     } catch (err) {
         res.status(500).json({ error: "Erro interno ao deletar aluno" });
