@@ -1,10 +1,11 @@
 const express = require('express');
-const routes = require('./routes/index');
+const routes = require('./src/routes/index');
 require('dotenv').config();
 
 const app = express();
 
-app.use(express.json());
+// SECURITY: Implement a 10kb payload limit to prevent potential Denial of Service (DoS) attacks
+app.use(express.json({ limit: '10kb' }));
 
 app.use('/escola', routes);
 
