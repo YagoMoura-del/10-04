@@ -1,4 +1,5 @@
 const alunoModel = require('../models/alunoModel');
+const { isValidEmail, isValidCPF } = require('../utils/validation');
 
 exports.getAlunos = async (req, res) => {
     try {
@@ -15,6 +16,17 @@ exports.createAluno = async (req, res) => {
     if (!id_turma || !nome_completo || !cpf || !data_nascimento || !email) {
         return res.status(400).json({ error: "Todos os campos do aluno são obrigatórios" });
     }
+
+    if (!isValidEmail(email)) {
+        // SECURITY: Validate email format to prevent malformed data entry
+        return res.status(400).json({ error: "Formato de email inválido" });
+    }
+
+    if (!isValidCPF(cpf)) {
+        // SECURITY: Validate CPF format to ensure data integrity
+        return res.status(400).json({ error: "Formato de CPF inválido" });
+    }
+
     try {
         const newAluno = await alunoModel.create(id_turma, nome_completo, cpf, data_nascimento, email);
         res.status(201).json(newAluno);
@@ -30,6 +42,16 @@ exports.updateAluno = async (req, res) => {
     
     if (!id_turma || !nome_completo || !cpf || !data_nascimento || !email) {
         return res.status(400).json({ error: 'Todos os campos são necessários para atualização.' });
+    }
+
+    if (!isValidEmail(email)) {
+        // SECURITY: Validate email format to prevent malformed data entry
+        return res.status(400).json({ error: "Formato de email inválido" });
+    }
+
+    if (!isValidCPF(cpf)) {
+        // SECURITY: Validate CPF format to ensure data integrity
+        return res.status(400).json({ error: "Formato de CPF inválido" });
     }
 
     try {
