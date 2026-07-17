@@ -32,7 +32,8 @@ exports.updateCurso = async (req, res) => {
     }
     try {
         const updatedCurso = await cursoModel.update(id, nome_curso);
-        if (!updatedCurso) {
+        // SECURITY: node-postgres returns an empty array for non-existent matches which is truthy. Check length.
+        if (!updatedCurso || updatedCurso.length === 0) {
             return res.status(404).json({ error: 'Curso não encontrado.' });
         }
         res.json(updatedCurso);
@@ -46,7 +47,8 @@ exports.deleteCurso = async (req, res) => {
     const { id } = req.params;
     try {
         const deleted = await cursoModel.delete(id);
-        if (!deleted) {
+        // SECURITY: node-postgres returns an empty array for non-existent matches which is truthy. Check length.
+        if (!deleted || deleted.length === 0) {
             return res.status(404).json({ error: "Curso não encontrado para exclusão" });
         }
         res.json({ message: "Curso removido com sucesso", curso: deleted });
