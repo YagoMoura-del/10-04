@@ -1,0 +1,4 @@
+## 2025-02-18 - Incorrect Handling of Empty Database Return Arrays in Controller Truthiness Checks
+**Vulnerability:** Checking for database query success using simple boolean negation on result (e.g., `if (!updated)`) where `updated` is returned as a `pg` rows array. An empty array `[]` is truthy in JavaScript, causing routes to incorrectly return a 200/success response instead of a 404 Not Found response when a record did not exist or was not modified.
+**Learning:** The database model functions return `result.rows`, which is always an array (e.g., `[]` when no rows are modified or returned by the query). In JavaScript, `[]` evaluates to truthy, so checking `if (!result)` fails to handle the "Not Found" condition correctly.
+**Prevention:** Always verify array length when evaluating query returns in Node-Postgres-based controllers by using the pattern: `if (!result || result.length === 0)`.
