@@ -1,0 +1,4 @@
+## 2024-07-24 - Node-Postgres Empty Array "Not Found" Logical Bypass
+**Vulnerability:** The application was using simple logical negation (`if (!result)`) to check if an update or delete query returned a valid row. However, since the `node-postgres` driver returns an empty array `[]` when no rows match, and empty arrays are truthy in JavaScript, the "Not Found" 404 check was completely bypassed, incorrectly returning successful HTTP 200 responses with empty data.
+**Learning:** This issue occurred because of a mismatch between the expected falsy return value of model queries and the actual returned value of `result.rows` (an array).
+**Prevention:** Always verify if a postgres query response is empty by checking `if (!result || result.length === 0)` instead of a simple truthy check `if (!result)`.
