@@ -1,0 +1,4 @@
+## 2025-07-29 - Array-Based DB Responses and Truthy Checks
+**Vulnerability:** A logic bypass and lack of correct error handling existed where database update/delete responses were assumed to be falsy if no records matched (`if (!updated)`). Since `node-postgres` returns an array, and empty arrays are truthy in JavaScript, the application incorrectly treated "no record found" as a successful operation.
+**Learning:** Checking for model responses requires verifying both the existence of the result and its length (`if (!result || result.length === 0)`), rather than a simple boolean check, to prevent logic errors and information leaks.
+**Prevention:** Standardize controller responses to always validate array lengths on any model result from node-postgres before proceeding with positive responses.
