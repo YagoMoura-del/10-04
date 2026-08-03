@@ -1,15 +1,14 @@
-const express = require('express');
-const routes = require('./routes/index');
-require('dotenv').config();
+const express = require("express");
+const routes = require("./src/routes/index");
+require("dotenv").config();
 
 const app = express();
 
 app.use(express.json());
 
-app.use('/escola', routes);
-
+app.use("/escola", routes);
 
 app.listen(3000, () => {
-    console.log(`Rodando em: http://localhost:3000/escola`);
-    console.log(`Rotas disponíveis: /cursos, /turmas, /alunos`);
+  console.log(`Rodando em: http://localhost:3000/escola`);
+  console.log(`Rotas disponíveis: /cursos, /turmas, /alunos`);
 });
