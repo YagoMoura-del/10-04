@@ -1,0 +1,4 @@
+## 2025-02-13 - Handling empty result arrays with node-postgres
+**Vulnerability:** Checking if a record was updated or deleted using falsy checks (e.g., `if (!updated)`) on `pg` query results. Since `node-postgres` returns an empty array `[]` when no rows are modified, and empty arrays are truthy in JavaScript, the 'Not Found' error handling (like 404 Status) is bypassed, leaking incorrect success responses (like 200 OK) to callers.
+**Learning:** In JavaScript, empty arrays evaluate to truthy. Therefore, any condition relying on `!result` to detect non-existent matches fails when the underlying model returns `result.rows` directly.
+**Prevention:** Always check both the existence of the array and its length when checking if an update or delete query actually matched any rows: `if (!result || result.length === 0)`.
