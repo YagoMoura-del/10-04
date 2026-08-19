@@ -4,7 +4,11 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(express.json());
+// SECURITY: Disable X-Powered-By header to prevent server fingerprinting
+app.disable('x-powered-by');
+
+// SECURITY: Restrict JSON payload size to 10kb to protect against payload-based DoS attacks
+app.use(express.json({ limit: '10kb' }));
 
 app.use('/escola', routes);
 
